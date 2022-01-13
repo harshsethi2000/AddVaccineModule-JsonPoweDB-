@@ -26,7 +26,7 @@ Before staring with JsonPowerDB refer to [Documentation](https://login2explore.c
 
 
 ![](two.png)
->Check if data is added in JsonDB database
+>Check if data is added in JsonPowerDB database
 
 
 ![](three.png)
