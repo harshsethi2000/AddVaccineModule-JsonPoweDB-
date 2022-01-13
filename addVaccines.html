@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Vaccination Manager</title>
+        <link href="css/styles.css" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+<!--        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js" crossorigin="anonymous"></script>-->
+    </head>
+    <body class="bg-primary">
+        <div id="layoutAuthentication">
+            <div id="layoutAuthentication_content">
+                <main>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-7">
+                                <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Add Vaccine</h3></div>
+                                    <div class="card-body">
+                                        <form>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input class="form-control" id="vaccineID" type="text" placeholder="Enter vaccine ID" />
+                                                        <label for="vaccineID">Vaccine ID</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-floating">
+                                                        <input class="form-control" id="vaccineName" type="text" placeholder="Enter vaccine name" />
+                                                        <label for="vaccineName">Vaccine Name</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input class="form-control" id="numberOfDoses" type="text" placeholder="Enter number of doses" />
+                                                        <label for="numberOfDoses">Number of doses</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-floating mb-3 mb-md-0">
+                                                        <input class="form-control" id="gapBetweenDose" type="text" placeholder="Enter Gap between dose" />
+                                                        <label for="gapBetweenDose">Gap between dose</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 mb-0">
+                                                <div class="d-grid"><button class="btn btn-primary btn-block" id="addVaccine" onclick="add()" >Add Vaccine</button> </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            <div id="layoutAuthentication_footer">
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+        <script>
+            function isDataValid()
+            {
+                
+                var vaccineId=$("#vaccineID").val();
+                if(vaccineId=="")
+                {
+                    alert("Vaccine Id is required");
+                    return false;
+                }
+                var vaccineName=$("#vaccineName").val();
+                if(vaccineName=="")
+                {
+                    alert("Vaccine Name is required");
+                    return false;
+                }
+                var numberOfDoses=$("#numberOfDoses").val();
+                if(numberOfDoses=="")
+                {
+                    alert("number of dose is required");
+                    return false;
+                }
+                var gapBetweenDose=$("#gapBetweenDose").val();
+                if(gapBetweenDose=="")
+                {
+                    alert("Gap between dose is required");
+                    return false;
+                }
+                //all data is valid
+                return true;
+            }
+            function getJsonObject()
+            {
+                var vaccineId=$("#vaccineID").val();
+                
+                var vaccineName=$("#vaccineName").val();
+                
+                var numberOfDoses=$("#numberOfDoses").val();
+                
+                var gapBetweenDose=$("#gapBetweenDose").val();
+ 
+//                create JSOn object and return that object
+                var jsonObj={
+                    vaccineID:vaccineId,
+                    vaccineName:vaccineName,
+                    numberOfDoses:numberOfDoses,
+                    gapBetweenDose:gapBetweenDose               
+                };
+                return JSON.stringify(jsonObj);
+            }
+            function createPUTRequest(connectionToken,jsonObject,databaseName,relationName)
+            {
+                var putRequest="{\n"
+                +"\"token\" : \""
+                +connectionToken
+                +"\","
+                +"\"dbName\":\""
+                +databaseName
+                +"\",\n" +"\"cmd\":\"PUT\",\n"
+                +"\"rel\":\""
+                +relationName
+                +"\","
+                +"\"jsonStr\":\n"
+                +jsonObject
+                +"\n"
+                +"}";
+        return putRequest;
+                
+            }
+            function executeCommand(reqString,baseURL,endPoint)
+            {
+                var url=baseURL+endPoint;
+                var jsonObj;
+                alert("pk");
+               $.post(url,reqString,function(result){
+                   jsonObj=JSON.parse(result);
+               }).fail(function(result){
+                  jsonObj=JSON.parse(result.responseText); 
+               });
+               return jsonObj;
+            }
+            function add()
+            {
+                alert("vaccine added");
+                //validate form data
+                if(!isDataValid())return;
+                
+                var jsonObject=getJsonObject();
+               //create JPDB request string- token ,dbname,rel name
+                  
+                 
+                var putReqString=createPUTRequest("90938512|-31948831076876280|90946945",jsonObject,"Vaccine","VACC-REL")
+                alert(putReqString);
+                //execute this request
+                
+                $.ajaxSetup({async:false});
+                var response=executeCommand(putReqString,"http://api.login2explore.com:5577","/api/iml");
+                $.ajaxSetup({async:true});
+                alert(JSON.stringify(response));
+                //Reset the form data
+                
+            }
+        </script>
+<!--        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        -->
+    </body>
+</html>
