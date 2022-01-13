@@ -21,4 +21,12 @@ Before staring with JsonPowerDB refer to [Documentation](https://login2explore.c
  >Fill form data
 
 
-![](Screenshot (224).png)
+![](one.png)
+>Submit form data
+
+
+![](two.png)
+>Check if data is added in JsonDB database
+
+
+![](three.png)
